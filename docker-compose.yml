@@ -28,3 +28,20 @@ services:
 
     stop_grace_period: 60s
 
+
+  control:
+    image: ghcr.io/harrytjbreen/cs2-control:latest
+    container_name: cs2-control
+    restart: unless-stopped
+
+    network_mode: host
+    depends_on:
+      - cs2
+
+    environment:
+      # RCON connection
+      RCON_HOST: "127.0.0.1"
+      RCON_PORT: "27015"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
+
+    stop_grace_period: 10s
