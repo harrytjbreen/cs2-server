@@ -2,6 +2,7 @@ mod config;
 mod global_state;
 mod rcon_client;
 mod state;
+mod update_state;
 
 use anyhow::Result;
 use tokio::runtime::Builder;
@@ -19,12 +20,10 @@ fn main() -> Result<()> {
 async fn async_main() -> Result<()> {
     let cfg = config::Config::from_env()?;
     let rcon = rcon_client::RconClient::new(cfg.rcon_addr(), cfg.rcon_password);
+    let _ = global_state::init_state();
 
     loop {
-        match rcon.cmd_with_retry("status", 5).await {
-            Ok(out) => println!("status:\n{out}"),
-            Err(e) => eprintln!("status failed: {e:#}"),
-        }
+        let _ = update_state::update_server_state(&rcon).await;
 
         sleep(Duration::from_secs(10)).await;
     }
