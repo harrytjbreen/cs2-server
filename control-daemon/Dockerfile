@@ -1,16 +1,19 @@
 # ----------------------------
 # Build stage
 # ----------------------------
-FROM rust:1.75-bookworm AS builder
+FROM rust:1.78-bookworm AS builder
 
 WORKDIR /app
 
-# Copy everything needed to build
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    ca-certificates
+
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
 
-# Build
-RUN cargo build --release
+RUN cargo build --release --verbose
 
 # ----------------------------
 # Runtime stage
