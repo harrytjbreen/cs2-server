@@ -6,7 +6,7 @@ set -euxo pipefail
 APP_USER="ubuntu"
 APP_DIR="/opt/cs2"
 REPO_URL="https://github.com/harrytjbreen/cs2-server.git"
-BRANCH="main"
+BRANCH="master"
 
 # Base system
 
