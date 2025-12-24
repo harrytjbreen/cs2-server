@@ -52,6 +52,10 @@ fi
 
 #get secrets
 
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
 SECRET_NAME="cs2/prod"
 REGION="eu-west-2"
 

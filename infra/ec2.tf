@@ -86,6 +86,11 @@ resource "aws_iam_role_policy_attachment" "ssm" {
   policy_arn = aws_iam_policy.cs2_secrets.arn
 }
 
+resource "aws_iam_role_policy_attachment" "ssm_core" {
+  role       = aws_iam_role.ssm.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 resource "aws_iam_instance_profile" "ssm" {
   name = aws_iam_role.ssm.name
   role = aws_iam_role.ssm.name
