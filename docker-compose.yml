@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  cs2:
+    image: ghcr.io/joedwards32/cs2:latest
+    container_name: cs2-server
+    restart: unless-stopped
+
+    network_mode: host
+
+    volumes:
+      - ./cs2-data:/home/steam/cs2-dedicated
+
+    environment:
+      SERVER_HOSTNAME: "My CS2 Server"
+      SERVER_PASSWORD: "${RCON_PASSWORD}"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
+
+      GAME_TYPE: "0"
+      GAME_MODE: "0"
+      MAP: "de_inferno"
+      MAX_PLAYERS: "10"
+
+      PORT: "27015"
+      RCON_PORT: "27015"
+
+      STEAM_GSLT: "${STEAM_GSLT}"
+
+    stop_grace_period: 60s
+
+  control-daemon:
+    build:
+      context: .
+      target: dev
+    env_file:
+      - .env
+
