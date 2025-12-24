@@ -16,7 +16,8 @@ apt-get install -y \
   curl \
   gnupg \
   lsb-release \
-  git
+  git \
+  unzip
 
 # Docker
 
