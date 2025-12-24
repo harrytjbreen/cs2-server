@@ -28,10 +28,3 @@ services:
 
     stop_grace_period: 60s
 
-  control-daemon:
-    build:
-      context: .
-      target: dev
-    env_file:
-      - .env
-

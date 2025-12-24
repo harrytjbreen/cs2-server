@@ -66,9 +66,24 @@ resource "aws_iam_role" "ssm" {
   })
 }
 
+resource "aws_iam_policy" "cs2_secrets" {
+  name = "cs2-secrets-access"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "secretsmanager:GetSecretValue"
+        Resource = aws_secretsmanager_secret.cs2.arn
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "ssm" {
   role       = aws_iam_role.ssm.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  policy_arn = aws_iam_policy.cs2_secrets.arn
 }
 
 resource "aws_iam_instance_profile" "ssm" {

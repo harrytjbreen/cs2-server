@@ -50,6 +50,17 @@ if [ ! -d "$APP_DIR/.git" ]; then
     "$APP_DIR"
 fi
 
+#get secrets
+
+SECRET_NAME="cs2/prod"
+REGION="eu-west-2"
+
+SECRET_JSON=$(aws secretsmanager get-secret-value \
+  --region "$REGION" \
+  --secret-id "$SECRET_NAME" \
+  --query SecretString \
+  --output text)
+
 # Deploy script
 
 cat >/opt/cs2/deploy.sh <<EOF
@@ -86,7 +97,8 @@ After=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=true
-User=ubuntu
+User=root
+Environment=$(echo "$SECRET_JSON" | jq -r 'to_entries | map("\(.key)=\(.value)") | join(" ")')
 WorkingDirectory=/opt/cs2
 ExecStart=/opt/cs2/deploy.sh
 ExecStop=/usr/bin/docker compose down
@@ -97,6 +109,8 @@ WantedBy=multi-user.target
 EOF
 
 # Enable service
+#
+sudo git config --system --add safe.directory /opt/cs2
 
 systemctl daemon-reload
 systemctl enable cs2
@@ -106,5 +120,8 @@ systemctl enable cs2
 snap install amazon-ssm-agent --classic || true
 systemctl enable amazon-ssm-agent
 systemctl restart amazon-ssm-agent
+
+cd /opt/cs2
+sudo ./deploy.sh
 
 echo "CS2 bootstrap complete"
