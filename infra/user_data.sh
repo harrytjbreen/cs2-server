@@ -52,16 +52,18 @@ fi
 
 # Deploy script
 
-cat >/opt/cs2/deploy.sh <<'EOF'
+cat >/opt/cs2/deploy.sh <<EOF
 #!/bin/bash
 set -euo pipefail
 
 cd /opt/cs2
 
-echo "Updating repo"
+BRANCH="${BRANCH}"
+
+echo "Updating repo (branch: \$BRANCH)"
 git fetch origin
-git checkout main
-git reset --hard origin/main
+git checkout "\$BRANCH"
+git reset --hard "origin/\$BRANCH"
 
 echo "Pulling Docker images"
 docker compose pull
@@ -73,13 +75,11 @@ EOF
 chmod +x /opt/cs2/deploy.sh
 chown "$APP_USER:$APP_USER" /opt/cs2/deploy.sh
 
-########################################
 # systemd service
-########################################
 
 cat >/etc/systemd/system/cs2.service <<'EOF'
 [Unit]
-Description=CS2 Server (Docker Compose, main branch)
+Description=CS2 Server (Docker Compose, ${BRANCH} branch)
 Requires=docker.service
 After=docker.service
 
@@ -96,16 +96,12 @@ TimeoutStartSec=0
 WantedBy=multi-user.target
 EOF
 
-########################################
 # Enable service
-########################################
 
 systemctl daemon-reload
 systemctl enable cs2
 
-########################################
 # SSM agent safety (belt + braces)
-########################################
 
 snap install amazon-ssm-agent --classic || true
 systemctl enable amazon-ssm-agent
