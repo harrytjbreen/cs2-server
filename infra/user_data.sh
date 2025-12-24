@@ -1,18 +1,14 @@
 #!/bin/bash
 set -euxo pipefail
 
-########################################
 # Config (edit these)
-########################################
 
 APP_USER="ubuntu"
 APP_DIR="/opt/cs2"
-REPO_URL="https://github.com/YOUR_ORG/YOUR_REPO.git"
+REPO_URL="https://github.com/harrytjbreen/cs2-server.git"
 BRANCH="main"
 
-########################################
 # Base system
-########################################
 
 apt-get update
 apt-get install -y \
@@ -22,17 +18,13 @@ apt-get install -y \
   lsb-release \
   git
 
-########################################
 # Docker
-########################################
 
 if ! command -v docker >/dev/null; then
   curl -fsSL https://get.docker.com | sh
 fi
 
-########################################
 # Docker Compose v2
-########################################
 
 if ! docker compose version >/dev/null 2>&1; then
   mkdir -p /usr/local/lib/docker/cli-plugins
@@ -44,16 +36,12 @@ fi
 systemctl enable docker
 systemctl start docker
 
-########################################
 # App directory
-########################################
 
 mkdir -p "$APP_DIR"
 chown -R "$APP_USER:$APP_USER" "$APP_DIR"
 
-########################################
 # Clone repo (only once)
-########################################
 
 if [ ! -d "$APP_DIR/.git" ]; then
   sudo -u "$APP_USER" git clone \
@@ -62,9 +50,7 @@ if [ ! -d "$APP_DIR/.git" ]; then
     "$APP_DIR"
 fi
 
-########################################
 # Deploy script
-########################################
 
 cat >/opt/cs2/deploy.sh <<'EOF'
 #!/bin/bash
@@ -72,15 +58,15 @@ set -euo pipefail
 
 cd /opt/cs2
 
-echo "▶ Updating repo"
+echo "Updating repo"
 git fetch origin
 git checkout main
 git reset --hard origin/main
 
-echo "▶ Pulling Docker images"
+echo "Pulling Docker images"
 docker compose pull
 
-echo "▶ Starting containers"
+echo "Starting containers"
 docker compose up -d
 EOF
 
@@ -125,4 +111,4 @@ snap install amazon-ssm-agent --classic || true
 systemctl enable amazon-ssm-agent
 systemctl restart amazon-ssm-agent
 
-echo "✔ CS2 bootstrap complete"
+echo "CS2 bootstrap complete"
