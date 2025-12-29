@@ -12,7 +12,6 @@ services:
       - ./cs2-data:/home/steam/cs2-dedicated
 
     environment:
-      SERVER_HOSTNAME: "My CS2 Server"
       SERVER_PASSWORD: "${RCON_PASSWORD}"
       RCON_PASSWORD: "${RCON_PASSWORD}"
 
@@ -39,6 +38,8 @@ services:
       - cs2
 
     environment:
+      # RCON connection
+      RCON_HOST: "127.0.0.1"
       RCON_PORT: "27015"
       RCON_PASSWORD: "${RCON_PASSWORD}"
 
