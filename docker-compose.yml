@@ -39,8 +39,6 @@ services:
       - cs2
 
     environment:
-      # RCON connection
-      RCON_HOST: "127.0.0.1"
       RCON_PORT: "27015"
       RCON_PASSWORD: "${RCON_PASSWORD}"
 
