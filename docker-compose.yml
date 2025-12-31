@@ -11,6 +11,11 @@ services:
     volumes:
       - ./cs2-data:/home/steam/cs2-dedicated
 
+    ports:
+      - "27005:27005/udp"
+      - "27015:27015/udp"
+      - "27015:27015/tcp"
+
     environment:
       SERVER_PASSWORD: "${RCON_PASSWORD}"
       RCON_PASSWORD: "${RCON_PASSWORD}"
