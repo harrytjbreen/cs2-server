@@ -21,18 +21,53 @@ impl RconClient {
 #[async_trait::async_trait]
 impl Rcon for RconClient {
     async fn exec(&self, command: &str) -> Result<String> {
-        let mut conn = timeout(
-            self.timeout,
-            rcon::Connection::connect(&self.addr, &self.password),
-        )
-        .await
-        .context("timeout connecting to RCON")?
-        .with_context(|| format!("failed to connect to RCON at {}", self.addr))?;
+        let mut attempts = 0;
 
-        let out = timeout(self.timeout, conn.cmd(command))
-            .await
-            .context("timeout executing RCON command")??;
+        loop {
+            attempts += 1;
 
-        Ok(out)
+            let connect = timeout(
+                self.timeout,
+                rcon::Connection::connect(&self.addr, &self.password),
+            )
+            .await;
+
+            let mut conn = match connect {
+                Ok(Ok(conn)) => conn,
+
+                Ok(Err(_e)) => {
+                    if attempts >= 10 {
+                        return Err(anyhow::anyhow!(
+                            "failed to connect to RCON at {} after {} attempts",
+                            self.addr,
+                            attempts
+                        ));
+                    }
+
+                    tokio::time::sleep(Duration::from_secs(3)).await;
+                    continue;
+                }
+
+                Err(_elapsed) => {
+                    if attempts >= 10 {
+                        return Err(anyhow::anyhow!(
+                            "timeout connecting to RCON at {} after {} attempts",
+                            self.addr,
+                            attempts
+                        ));
+                    }
+
+                    tokio::time::sleep(Duration::from_secs(3)).await;
+                    continue;
+                }
+            };
+
+            // Command execution
+            let out = timeout(self.timeout, conn.cmd(command))
+                .await
+                .context("timeout executing RCON command")??;
+
+            return Ok(out);
+        }
     }
 }

@@ -16,11 +16,6 @@ services:
     security_opt:
       - seccomp=unconfined
 
-    ports:
-      - "27005:27005/udp"
-      - "27015:27015/udp"
-      - "27015:27015/tcp"
-
     environment:
       CS2_RCONPW: "${RCON_PASSWORD}"
 
