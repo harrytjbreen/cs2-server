@@ -1,20 +1,20 @@
 use std::time::Instant;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default)]
 pub struct ServerState {
-    //   pub is_running: bool,
-    //  pub current_map: Option<String>,
     pub last_status: Option<String>,
     pub last_updated: Option<Instant>,
+    pub map: Option<String>,
+    pub num_of_players: Option<u32>,
 }
 
 impl ServerState {
     pub fn new() -> Self {
         Self {
-            //         is_running: false,
-            //        current_map: None,
             last_status: None,
             last_updated: None,
+            map: None,
+            num_of_players: None,
         }
     }
 }

@@ -26,4 +26,3 @@ impl Config {
         format!("{}:{}", self.rcon_host, self.rcon_port)
     }
 }
-

@@ -60,6 +60,15 @@ resource "aws_security_group" "cs2" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # CS2 server logs (UDP logaddress_add)
+  ingress {
+    description = "CS2 Server Logs UDP"
+    from_port   = 27500
+    to_port     = 27500
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0

@@ -1,14 +1,23 @@
 mod config;
-mod global_state;
-mod rcon_client;
+mod rcon;
+pub mod service;
 mod state;
-mod update_state;
+
+use std::sync::Arc;
 
 use anyhow::Result;
 use tokio::runtime::Builder;
-use tokio::time::{Duration, sleep};
+use tokio::sync::watch;
+
+use crate::rcon::client::RconClient;
+use crate::rcon::rcon::Rcon;
+use crate::service::listeners::chat_listener::chat_listener;
+use crate::service::listeners::server_state_sync::sync_state;
+use crate::state::state::ServerState;
 
 fn main() -> Result<()> {
+    dotenvy::dotenv().ok();
+
     let rt = Builder::new_multi_thread()
         .enable_io()
         .enable_time()
@@ -19,12 +28,14 @@ fn main() -> Result<()> {
 
 async fn async_main() -> Result<()> {
     let cfg = config::Config::from_env()?;
-    let rcon = rcon_client::RconClient::new(cfg.rcon_addr(), cfg.rcon_password);
-    let _ = global_state::init_state();
 
-    loop {
-        let _ = update_state::update_server_state(&rcon).await;
+    let rcon: Arc<dyn Rcon> = Arc::new(RconClient::new(cfg.rcon_addr(), cfg.rcon_password));
 
-        sleep(Duration::from_secs(10)).await;
-    }
+    let (status_tx, _) = watch::channel::<Option<ServerState>>(None);
+
+    tokio::spawn(sync_state(Arc::clone(&rcon), status_tx));
+    tokio::spawn(chat_listener(Arc::clone(&rcon)));
+
+    tokio::signal::ctrl_c().await?;
+    Ok(())
 }
