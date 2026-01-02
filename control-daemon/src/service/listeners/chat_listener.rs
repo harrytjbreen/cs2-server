@@ -26,9 +26,10 @@ pub async fn chat_listener(rcon: Arc<dyn Rcon>) -> Result<()> {
 
     // Enable server log streaming
     let _ = rcon.exec("log on").await;
+    let _ = rcon.exec("sv_logecho 1").await;
+    let _ = rcon.exec("sv_logfile 1").await;
     let _ = rcon.exec("logaddress_delall").await;
     let _ = rcon.exec(&format!("logaddress_add {}", log_addr)).await;
-
     let mut buf = [0u8; 4096];
 
     loop {
