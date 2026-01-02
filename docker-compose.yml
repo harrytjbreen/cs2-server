@@ -25,9 +25,10 @@ services:
       CS2_RCONPW: "${RCON_PASSWORD}"
 
       GAME_TYPE: "0"
-      GAME_MODE: "0"
+      GAME_MODE: "1"
       MAP: "de_inferno"
       MAX_PLAYERS: "10"
+      CS2_VALIDATE: "0"
 
       PORT: "27015"
       CS2_RCON_PORT: "27015"
