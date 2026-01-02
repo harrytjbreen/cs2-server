@@ -54,8 +54,8 @@ resource "aws_security_group" "cs2" {
   # RCON
   ingress {
     description = "RCON TCP"
-    from_port   = 27015
-    to_port     = 27015
+    from_port   = 27016
+    to_port     = 27016
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

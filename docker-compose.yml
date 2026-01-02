@@ -31,7 +31,7 @@ services:
       CS2_VALIDATE: "0"
 
       PORT: "27015"
-      CS2_RCON_PORT: "27015"
+      CS2_RCON_PORT: "27016"
 
       STEAM_GSLT: "${STEAM_GSLT}"
 
@@ -50,7 +50,7 @@ services:
     environment:
       # RCON connection
       RCON_HOST: "127.0.0.1"
-      RCON_PORT: "27015"
+      RCON_PORT: "27016"
       RCON_PASSWORD: "${RCON_PASSWORD}"
 
     stop_grace_period: 10s
