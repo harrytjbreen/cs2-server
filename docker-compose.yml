@@ -22,7 +22,7 @@ services:
       - "27015:27015/tcp"
 
     environment:
-      RCON_PASSWORD: "${RCON_PASSWORD}"
+      CS2_RCONPW: "${RCON_PASSWORD}"
 
       GAME_TYPE: "0"
       GAME_MODE: "0"
@@ -30,7 +30,7 @@ services:
       MAX_PLAYERS: "10"
 
       PORT: "27015"
-      RCON_PORT: "27015"
+      CS2_RCON_PORT: "27015"
 
       STEAM_GSLT: "${STEAM_GSLT}"
 
