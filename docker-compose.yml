@@ -5,6 +5,8 @@ services:
     image: ghcr.io/joedwards32/cs2:latest
     container_name: cs2-server
     restart: unless-stopped
+    stdin_open: true
+    tty: true
 
     network_mode: host
 
@@ -20,7 +22,6 @@ services:
       - "27015:27015/tcp"
 
     environment:
-      SERVER_PASSWORD: "${RCON_PASSWORD}"
       RCON_PASSWORD: "${RCON_PASSWORD}"
 
       GAME_TYPE: "0"

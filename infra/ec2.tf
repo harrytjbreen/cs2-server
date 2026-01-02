@@ -24,14 +24,34 @@ resource "aws_security_group" "cs2" {
   description = "CS2 server"
   vpc_id      = data.aws_vpc.default.id
 
+  # Game traffic
   ingress {
-    description = "CS2 UDP"
+    description = "CS2 Game UDP"
     from_port   = 27015
     to_port     = 27015
     protocol    = "udp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Steam client traffic (important)
+  ingress {
+    description = "Steam UDP"
+    from_port   = 27005
+    to_port     = 27005
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Query / GOTV / buffer range
+  ingress {
+    description = "CS2 UDP Range"
+    from_port   = 27015
+    to_port     = 27020
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # RCON
   ingress {
     description = "RCON TCP"
     from_port   = 27015
@@ -109,7 +129,7 @@ resource "aws_instance" "cs2" {
   iam_instance_profile = aws_iam_instance_profile.ssm.name
 
   root_block_device {
-    volume_size           = 60
+    volume_size           = 70
     volume_type           = "gp3"
     delete_on_termination = true
   }
